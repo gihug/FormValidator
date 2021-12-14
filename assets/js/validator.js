@@ -1,4 +1,6 @@
 function Validator(options) {
+  var selectorRules = [];
+
   //Hàm thực hiện Validate
   function validate(inputElement, rule) {
     var errorElement =
@@ -16,6 +18,7 @@ function Validator(options) {
   var formElement = document.querySelector(options.form);
   if (formElement) {
     options.rules.forEach(function (rule) {
+      selectorRules[rule.selector] = rule.test;
       var inputElement = formElement.querySelector(rule.selector);
       if (inputElement) {
         inputElement.onblur = function () {
