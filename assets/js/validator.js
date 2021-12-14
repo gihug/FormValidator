@@ -1,11 +1,23 @@
 function Validator(options) {
-  var selectorRules = [];
+  var selectorRules = {};
 
   //Hàm thực hiện Validate
   function validate(inputElement, rule) {
     var errorElement =
       inputElement.parentElement.querySelector(".form-message");
-    var errorMessage = rule.test(inputElement.value);
+    // Lấy danh sách các rules của selector
+    var rules = selectorRules[rule.selector];
+    var errorMessage;
+
+    //Kiểm tra theo thứ tự lần lượt
+    //Nếu chưa thỏa mãn thì dừng lại luôn
+    for (let index = 0; index < rules.length; index++) {
+      errorMessage = rules[index](inputElement.value);
+      if (errorMessage) {
+        break;
+      }
+    }
+
     if (errorMessage) {
       errorElement.innerText = errorMessage;
       inputElement.parentElement.classList.add("invalid");
@@ -18,7 +30,14 @@ function Validator(options) {
   var formElement = document.querySelector(options.form);
   if (formElement) {
     options.rules.forEach(function (rule) {
-      selectorRules[rule.selector] = rule.test;
+      // Lưu lại các rules cho mỗi input:
+      //   - Nếu nó đã tồn tại 1 rule rồi thì sẽ push hoặc ngược lại
+      if (Array.isArray(selectorRules[rule.selector])) {
+        selectorRules[rule.selector].push(rule.test);
+      } else {
+        selectorRules[rule.selector] = [rule.test];
+      }
+
       var inputElement = formElement.querySelector(rule.selector);
       if (inputElement) {
         inputElement.onblur = function () {
@@ -67,7 +86,6 @@ Validator.minLength = function (selector, min) {
 };
 
 Validator.isConfirmed = function (selector, getConfirmValue, message) {
-  console.log(getConfirmValue());
   return {
     selector: selector,
     test: function (value) {
