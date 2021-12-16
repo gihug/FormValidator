@@ -25,10 +25,34 @@ function Validator(options) {
       errorElement.innerText = "";
       inputElement.parentElement.classList.remove("invalid");
     }
+
+    return !!errorMessage;
   }
 
   var formElement = document.querySelector(options.form);
   if (formElement) {
+    //Bắt event submit form
+    formElement.onsubmit = function (e) {
+      e.preventDefault();
+
+      var isFormValid = false;
+      //Thực hiện validate tất cả các rule
+      options.rules.forEach(function (rule) {
+        var inputElement = formElement.querySelector(rule.selector);
+        var isValid = validate(inputElement, rule);
+        if (isValid) {
+          isFormValid = true;
+        }
+      });
+
+      if (isFormValid) {
+        console.log("Vui lòng nhập đúng thông tin.");
+      } else {
+        console.log("Nhập thành công!");
+      }
+    };
+
+    //Thực hiện lặp trên từng element của rules
     options.rules.forEach(function (rule) {
       // Lưu lại các rules cho mỗi input:
       //   - Nếu nó đã tồn tại 1 rule rồi thì sẽ push hoặc ngược lại

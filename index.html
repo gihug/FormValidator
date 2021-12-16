@@ -76,10 +76,10 @@
       form: "#form-1",
       rules: [
         Validator.isRequired("#fullname"),
-        Validator.isRequired("#email"),
         Validator.isEmail("#email"),
         Validator.isRequired("#password"),
         Validator.minLength("#password", 6),
+        Validator.isRequired("#password_confirmation"),
         Validator.isConfirmed(
           "#password_confirmation",
           function () {
@@ -88,6 +88,9 @@
           "Nhập lại mật khẩu không chính xác!"
         ),
       ],
+      onSubmit: function (e) {
+        console.log(e);
+      },
     });
   </script>
 </html>
