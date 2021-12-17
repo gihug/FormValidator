@@ -1,4 +1,14 @@
 function Validator(options) {
+  function getParentElement(element, selector) {
+    while (element.parentElement) {
+      // matches kiếm tra xem có 
+      if (element.parentElement.matches(selector)) {
+        return element.parentElement;
+      }
+      element = element.parentElement;
+    }
+  }
+
   var selectorRules = {};
 
   //Hàm thực hiện Validate
@@ -48,7 +58,17 @@ function Validator(options) {
       if (isFormValid) {
         console.log("Vui lòng nhập đúng thông tin.");
       } else {
-        console.log("Nhập thành công!");
+        if (typeof options.onSubmit === "function") {
+          var enableInputs = formElement.querySelectorAll(
+            "[name]:not([disabled])"
+          );
+          console.log(enableInputs);
+          var formValues = Array.from(enableInputs).reduce((values, input) => {
+            values[input.name] = input.value;
+            return values;
+          }, {});
+          options.onSubmit(formValues);
+        }
       }
     };
 
