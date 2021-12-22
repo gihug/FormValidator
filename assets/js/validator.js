@@ -1,7 +1,8 @@
 function Validator(options) {
+  // Lấy mặc định node cha
   function getParentElement(element, selector) {
     while (element.parentElement) {
-      // matches kiếm tra xem có 
+      // matches kiếm tra selector
       if (element.parentElement.matches(selector)) {
         return element.parentElement;
       }
@@ -13,8 +14,10 @@ function Validator(options) {
 
   //Hàm thực hiện Validate
   function validate(inputElement, rule) {
-    var errorElement =
-      inputElement.parentElement.querySelector(".form-message");
+    var errorElement = getParentElement(
+      inputElement,
+      options.formGroupSelector
+    ).querySelector(options.errorSelector);
     // Lấy danh sách các rules của selector
     var rules = selectorRules[rule.selector];
     var errorMessage;
@@ -30,10 +33,15 @@ function Validator(options) {
 
     if (errorMessage) {
       errorElement.innerText = errorMessage;
-      inputElement.parentElement.classList.add("invalid");
+      getParentElement(inputElement, options.formGroupSelector).classList.add(
+        "invalid"
+      );
     } else {
       errorElement.innerText = "";
-      inputElement.parentElement.classList.remove("invalid");
+      getParentElement(
+        inputElement,
+        options.formGroupSelector
+      ).classList.remove("invalid");
     }
 
     return !!errorMessage;
@@ -90,10 +98,15 @@ function Validator(options) {
       }
 
       inputElement.oninput = function () {
-        var errorElement =
-          inputElement.parentElement.querySelector(".form-message");
+        var errorElement = getParentElement(
+          inputElement,
+          options.formGroupSelector
+        ).querySelector(".form-message");
         errorElement.innerText = "";
-        inputElement.parentElement.classList.remove("invalid");
+        getParentElement(
+          inputElement,
+          options.formGroupSelector
+        ).classList.remove("invalid");
       };
     });
   }
