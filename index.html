@@ -65,6 +65,38 @@
           <span class="form-message"></span>
         </div>
 
+        <div class="form-group">
+          <label for="gender" class="form-label">Chọn giới tính</label>
+          <div class="gender-select">
+            <div class="gender-select-item">
+              <input
+                value="male"
+                name="gender"
+                type="radio"
+                class="form-control"
+              /><span>Nam</span>
+            </div>
+            <div class="gender-select-item">
+              <input
+                value="female"
+                name="gender"
+                type="radio"
+                class="form-control"
+              /><span>Nữ</span>
+            </div>
+            <div class="gender-select-item">
+              <input
+                value="other"
+                name="gender"
+                type="radio"
+                class="form-control"
+              /><span>Khác</span>
+            </div>
+          </div>
+
+          <span class="form-message"></span>
+        </div>
+
         <button class="form-submit">Đăng ký</button>
       </form>
     </div>
@@ -89,6 +121,7 @@
           },
           "Nhập lại mật khẩu không chính xác!"
         ),
+        Validator.isRequired('input[name="gender"]'),
       ],
       onSubmit: function (e) {
         console.log(e);

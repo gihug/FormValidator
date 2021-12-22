@@ -104,3 +104,24 @@ html {
 .spacer {
   margin-top: 36px;
 }
+
+.gender-select {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.gender-select-item {
+  display: flex;
+  flex-direction: row;
+}
+
+.gender-select-item input {
+  width: 1.6rem;
+}
+
+.gender-select-item span {
+  line-height: 40px;
+  font-size: 1.6rem;
+  margin-left: 8px;
+}

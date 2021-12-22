@@ -25,7 +25,17 @@ function Validator(options) {
     //Kiểm tra theo thứ tự lần lượt
     //Nếu chưa thỏa mãn thì dừng lại luôn
     for (let index = 0; index < rules.length; index++) {
-      errorMessage = rules[index](inputElement.value);
+      switch (inputElement.type) {
+        case "checkkbox":
+          // khi type của input là checkbox thì chọn ra thằng checked với cái selector
+          errorMessage = rules[index](
+            formElement.querySelector(rule.selector + ":checked")
+          );
+          break;
+        default:
+          errorMessage = rules[index](inputElement.value);
+      }
+
       if (errorMessage) {
         break;
       }
@@ -90,24 +100,25 @@ function Validator(options) {
         selectorRules[rule.selector] = [rule.test];
       }
 
-      var inputElement = formElement.querySelector(rule.selector);
-      if (inputElement) {
+      var inputElements = formElement.querySelectorAll(rule.selector);
+
+      inputElements.forEach((inputElement) => {
         inputElement.onblur = function () {
           validate(inputElement, rule);
         };
-      }
 
-      inputElement.oninput = function () {
-        var errorElement = getParentElement(
-          inputElement,
-          options.formGroupSelector
-        ).querySelector(".form-message");
-        errorElement.innerText = "";
-        getParentElement(
-          inputElement,
-          options.formGroupSelector
-        ).classList.remove("invalid");
-      };
+        inputElement.oninput = function () {
+          var errorElement = getParentElement(
+            inputElement,
+            options.formGroupSelector
+          ).querySelector(".form-message");
+          errorElement.innerText = "";
+          getParentElement(
+            inputElement,
+            options.formGroupSelector
+          ).classList.remove("invalid");
+        };
+      });
     });
   }
 }
@@ -116,7 +127,9 @@ Validator.isRequired = function (selector) {
   return {
     selector: selector,
     test: function (value) {
-      return value.trim() ? undefined : "Vui lòng nhập trường này";
+      console.log(value);
+      value = value && typeof value === "string" ? value.trim() : null;
+      return value ? undefined : "Vui lòng nhập trường này";
     },
   };
 };
