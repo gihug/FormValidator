@@ -26,11 +26,14 @@ function Validator(options) {
     //Nếu chưa thỏa mãn thì dừng lại luôn
     for (let index = 0; index < rules.length; index++) {
       switch (inputElement.type) {
-        case "checkkbox":
-          // khi type của input là checkbox thì chọn ra thằng checked với cái selector
+        case "radio":
+        case "checkbox":
+          // khi type của input là checkbox thì chọn ra thằng checked với
+          // cái selector
           errorMessage = rules[index](
             formElement.querySelector(rule.selector + ":checked")
           );
+          console.log(errorMessage);
           break;
         default:
           errorMessage = rules[index](inputElement.value);
@@ -64,7 +67,7 @@ function Validator(options) {
       e.preventDefault();
 
       var isFormValid = false;
-      //Thực hiện validate tất cả các rule
+      //Thực hiện validate lần lượt từng rule
       options.rules.forEach(function (rule) {
         var inputElement = formElement.querySelector(rule.selector);
         var isValid = validate(inputElement, rule);
@@ -82,7 +85,17 @@ function Validator(options) {
           );
           console.log(enableInputs);
           var formValues = Array.from(enableInputs).reduce((values, input) => {
-            values[input.name] = input.value;
+            switch (input.type) {
+              case "radio":
+              case "checkbox":
+                values[input.name] = formElement.querySelector(
+                  `input[name="${input.name}"]:checked`
+                ).value;
+                break;
+              default:
+                values[input.name] = input.value;
+            }
+
             return values;
           }, {});
           options.onSubmit(formValues);
@@ -102,7 +115,7 @@ function Validator(options) {
 
       var inputElements = formElement.querySelectorAll(rule.selector);
 
-      inputElements.forEach((inputElement) => {
+      Array.from(inputElements).forEach((inputElement) => {
         inputElement.onblur = function () {
           validate(inputElement, rule);
         };
@@ -127,8 +140,6 @@ Validator.isRequired = function (selector) {
   return {
     selector: selector,
     test: function (value) {
-      console.log(value);
-      value = value && typeof value === "string" ? value.trim() : null;
       return value ? undefined : "Vui lòng nhập trường này";
     },
   };
