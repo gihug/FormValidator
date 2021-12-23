@@ -33,7 +33,6 @@ function Validator(options) {
           errorMessage = rules[index](
             formElement.querySelector(rule.selector + ":checked")
           );
-          console.log(errorMessage);
           break;
         default:
           errorMessage = rules[index](inputElement.value);
@@ -83,14 +82,26 @@ function Validator(options) {
           var enableInputs = formElement.querySelectorAll(
             "[name]:not([disabled])"
           );
-          console.log(enableInputs);
           var formValues = Array.from(enableInputs).reduce((values, input) => {
             switch (input.type) {
               case "radio":
+                values[input.name] =
+                  formElement.querySelector(
+                    `input[name="${input.name}"]:checked`
+                  )?.value || "";
+                break;
               case "checkbox":
-                values[input.name] = formElement.querySelector(
-                  `input[name="${input.name}"]:checked`
-                ).value;
+                if (!input.matches(":checked")) {
+                  values[input.name] = "";
+                  return values;
+                }
+                if (!Array.isArray(values[input.name])) {
+                  values[input.name] = [];
+                }
+                values[input.name].push(input.value);
+                break;
+              case "file":
+                values[input.name] = input.files;
                 break;
               default:
                 values[input.name] = input.value;
